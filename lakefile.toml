@@ -1,0 +1,15 @@
+name = "formalisms"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["Formalisms"]
+
+[leanOptions]
+autoImplicit = false
+pp.structureInstances = false
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+
+[[lean_lib]]
+name = "Formalisms"
