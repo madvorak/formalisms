@@ -21,3 +21,7 @@
 [How to read Lean](https://github.com/madvorak/read-lean) (how to understand definitions and theorems written in Lean)
 
 [Overview of basic tactics](https://github.com/madvorak/lean4-tactics) (things you use in proofs, not in definitions and theorems)
+
+## I am an advanced user
+
+[This is boring. Challenge me!](https://teorth.github.io/equational_theories/implications/im-feeling-lucky.html) (gives you on open problem to work on)
