@@ -117,4 +117,4 @@ by
   rintro ⟨⟨f, hf⟩, ⟨g, hg⟩⟩
   classical
   let F : A → B := fun a => if haₒ : OddGeneration f g a then funOdd haₒ else f a
-  sorry
+  sorry -- homework #1

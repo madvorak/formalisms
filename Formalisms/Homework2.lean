@@ -1,11 +1,12 @@
 import Mathlib.Tactic
 
 
+section relations
+
 class Relation (A : Type) where
   rel : A → A → Prop
 
 infix:51 " ⊑ " => Relation.rel
-
 
 def Reflexiv (A : Type) [Relation A] : Prop := ∀ x : A, x ⊑ x
 
@@ -18,16 +19,19 @@ class Poset (A : Type) extends Relation A where
   antis : Antisym A
   trans : Transitiv A
 
-
-section posets
-
-variable {A : Type} [Poset A]
-
-theorem triangleless (a b c : A) :
+theorem triangleless {A : Type} [Poset A] (a b c : A) :
   (a ⊑ b ∧ b ⊑ c ∧ c ⊑ a) → a = b :=
 by
   sorry
 
+end relations
+
+
+variable {A : Type}
+
+section bounds
+
+variable [Poset A]
 
 def Set.LowerBound (S : Set A) (a : A) : Prop :=
   ∀ x ∈ S, a ⊑ x
@@ -45,12 +49,12 @@ class CompleteLattic (A : Type) extends Poset A where
   hasInfim : ∀ S : Set A, ∃ b : A, S.GreatLowerBound b
   hasSupre : ∀ S : Set A, ∃ y : A, S.LeastUpperBound y
 
-end posets
+end bounds
 
 
-section lattices
+section extrema
 
-variable {A : Type} [CompleteLattic A]
+variable [CompleteLattic A]
 
 noncomputable def infim (S : Set A) : A :=
   (CompleteLattic.hasInfim S).choose
@@ -73,54 +77,58 @@ lemma infim_is_Great (S : Set A) (a : A) (ha : S.LowerBound a) : a ⊑ ⊓S :=
 lemma supre_is_Least (S : Set A) (z : A) (hz : S.UpperBound z) : ⊔S ⊑ z :=
   (CompleteLattic.hasSupre S).choose_spec.right z hz
 
-end lattices
+end extrema
+
+
+section stuff
+
+def Monoton [Relation A] (F : A → A) : Prop :=
+  ∀ x y : A, x ⊑ y → F x ⊑ F y
+
+def UniqueMember (S : Set A) (a : A) : Prop :=
+  a ∈ S ∧ ∀ b ∈ S, b = a
+
+end stuff
 
 
 section fixpoints
 
-def Monoton {A : Type} [Relation A] (F : A → A) : Prop :=
-  ∀ x y : A, x ⊑ y → F x ⊑ F y
-
-def UniqueMember {A : Type} (S : Set A) (a : A) : Prop :=
-  a ∈ S ∧ ∀ b ∈ S, b = a
-
-def Fixpoint {A : Type} (F : A → A) (x : A) : Prop :=
+def Fixpoint (F : A → A) (x : A) : Prop :=
   F x = x
 
-def Prefixpoint {A : Type} [Relation A] (F : A → A) (x : A) : Prop :=
+def Prefixpoint [Relation A] (F : A → A) (x : A) : Prop :=
   x ⊑ F x
 
-def Posfixpoint {A : Type} [Relation A] (F : A → A) (x : A) : Prop :=
+def Posfixpoint [Relation A] (F : A → A) (x : A) : Prop :=
   F x ⊑ x
 
-lemma prefixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A} (fpx : Fixpoint F x) :
+lemma prefixpoint_of_fixpoint [Poset A] {F : A → A} {x : A} (fpx : Fixpoint F x) :
   Prefixpoint F x :=
 by
   unfold Prefixpoint
   unfold Fixpoint at fpx
   rw [fpx]
-  apply P.refle
+  apply Poset.refle
 
-lemma posfixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A} (fpx : Fixpoint F x) :
+lemma posfixpoint_of_fixpoint [Poset A] {F : A → A} {x : A} (fpx : Fixpoint F x) :
   Posfixpoint F x :=
 by
   unfold Posfixpoint
   unfold Fixpoint at fpx
   rw [fpx]
-  apply P.refle _
+  apply Poset.refle
 
-lemma fixpoint_of_pre_pos {A : Type} (P : Poset A) {F : A → A} {x : A} :
+lemma fixpoint_of_pre_pos [Poset A] {F : A → A} {x : A} :
   Posfixpoint F x → Prefixpoint F x → Fixpoint F x :=
-P.antis (F x) x
+Poset.antis (F x) x
 
-def GreatFixpoint {A : Type} [Poset A] (F : A → A) : Set A :=
-  Fixpoint F ∩ (Set.UpperBound (Fixpoint F))
+def GreatFixpoint [Poset A] (F : A → A) : Set A :=
+  Fixpoint F ∩ (setOf (Fixpoint F)).UpperBound
 
-def LeastFixpoint {A : Type} [Poset A] (F : A → A) : Set A :=
-  Fixpoint F ∩ (Set.LowerBound (Fixpoint F))
+def LeastFixpoint [Poset A] (F : A → A) : Set A :=
+  Fixpoint F ∩ (setOf (Fixpoint F)).LowerBound
 
-theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
-  [CompleteLattic A] (hF : Monoton F) :
+theorem fixpointKnasterTarski {F : A → A} [CompleteLattic A] (hF : Monoton F) :
   -- the least upper bound of all prefixpoints (ŷ) is the (unique) great fixpoint
   UniqueMember (GreatFixpoint F) (⊔ Prefixpoint F) ∧
   -- the great lower bound of all posfixpoints (ẑ) is the (unique) least fixpoint
