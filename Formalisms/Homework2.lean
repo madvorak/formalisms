@@ -29,21 +29,21 @@ by
   sorry
 
 
-def LowerBound (a : A) (S : Set A) : Prop :=
+def Set.LowerBound (S : Set A) (a : A) : Prop :=
   ∀ x ∈ S, a ⊑ x
 
-def UpperBound (z : A) (S : Set A) : Prop :=
+def Set.UpperBound (S : Set A) (z : A) : Prop :=
   ∀ x ∈ S, x ⊑ z
 
-def LeastUpperBound (y : A) (S : Set A) : Prop :=
-  UpperBound y S ∧ ∀ z : A, UpperBound z S → y ⊑ z
+def Set.LeastUpperBound (S : Set A) (y : A) : Prop :=
+  S.UpperBound y ∧ ∀ z : A, S.UpperBound z → y ⊑ z
 
-def GreatLowerBound (b : A) (S : Set A) : Prop :=
-  LowerBound b S ∧ ∀ a : A, LowerBound a S → a ⊑ b
+def Set.GreatLowerBound (S : Set A) (b : A) : Prop :=
+  S.LowerBound b ∧ ∀ a : A, S.LowerBound a → a ⊑ b
 
 class CompleteLattic (A : Type) extends Poset A where
-  hasInfim : ∀ S : Set A, ∃ b : A, GreatLowerBound b S
-  hasSupre : ∀ S : Set A, ∃ y : A, LeastUpperBound y S
+  hasInfim : ∀ S : Set A, ∃ b : A, S.GreatLowerBound b
+  hasSupre : ∀ S : Set A, ∃ y : A, S.LeastUpperBound y
 
 end posets
 
@@ -61,16 +61,16 @@ noncomputable def supre (S : Set A) : A :=
 prefix:70 " ⊓ " => infim
 prefix:70 " ⊔ " => supre
 
-lemma infim_is_LowerBound (S : Set A) : LowerBound (⊓S) S :=
+lemma infim_is_LowerBound (S : Set A) : S.LowerBound (⊓S) :=
   (CompleteLattic.hasInfim S).choose_spec.left
 
-lemma supre_is_UpperBound (S : Set A) : UpperBound (⊔S) S :=
+lemma supre_is_UpperBound (S : Set A) : S.UpperBound (⊔S) :=
   (CompleteLattic.hasSupre S).choose_spec.left
 
-lemma infim_is_Great (S : Set A) (a : A) (ha : LowerBound a S) : a ⊑ ⊓S :=
+lemma infim_is_Great (S : Set A) (a : A) (ha : S.LowerBound a) : a ⊑ ⊓S :=
   (CompleteLattic.hasInfim S).choose_spec.right a ha
 
-lemma supre_is_Least (S : Set A) (z : A) (hz : UpperBound z S) : ⊔S ⊑ z :=
+lemma supre_is_Least (S : Set A) (z : A) (hz : S.UpperBound z) : ⊔S ⊑ z :=
   (CompleteLattic.hasSupre S).choose_spec.right z hz
 
 end lattices
@@ -93,8 +93,7 @@ def Prefixpoint {A : Type} [Relation A] (F : A → A) (x : A) : Prop :=
 def Posfixpoint {A : Type} [Relation A] (F : A → A) (x : A) : Prop :=
   F x ⊑ x
 
-lemma prefixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A}
-  (fpx : Fixpoint F x) :
+lemma prefixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A} (fpx : Fixpoint F x) :
   Prefixpoint F x :=
 by
   unfold Prefixpoint
@@ -102,8 +101,7 @@ by
   rw [fpx]
   apply P.refle
 
-lemma posfixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A}
-  (fpx : Fixpoint F x) :
+lemma posfixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A} (fpx : Fixpoint F x) :
   Posfixpoint F x :=
 by
   unfold Posfixpoint
@@ -111,16 +109,15 @@ by
   rw [fpx]
   apply P.refle _
 
-lemma fixpoint_of_pre_pos {A : Type} (P : Poset A) {F : A → A} {x : A}
-  (preF : Prefixpoint F x) (posF : Posfixpoint F x) :
-  Fixpoint F x :=
-P.antis (F x) x posF preF
+lemma fixpoint_of_pre_pos {A : Type} (P : Poset A) {F : A → A} {x : A} :
+  Posfixpoint F x → Prefixpoint F x → Fixpoint F x :=
+P.antis (F x) x
 
 def GreatFixpoint {A : Type} [Poset A] (F : A → A) : Set A :=
-  Fixpoint F ∩ (UpperBound · (Fixpoint F))
+  Fixpoint F ∩ (Set.UpperBound (Fixpoint F))
 
 def LeastFixpoint {A : Type} [Poset A] (F : A → A) : Set A :=
-  Fixpoint F ∩ (LowerBound · (Fixpoint F))
+  Fixpoint F ∩ (Set.LowerBound (Fixpoint F))
 
 theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
   [CompleteLattic A] (hF : Monoton F) :
