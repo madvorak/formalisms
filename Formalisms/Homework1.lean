@@ -89,7 +89,7 @@ by
   sorry
 
 /-- This function is called `g⁻¹` in the textbook. For simplicity, we define it only as
-    a function `Aₒ → B` (which is sufficient for proving the Schroder-Bernstein theorem). -/
+    a function `Aₒ → B` (which is sufficient for proving the Schröder-Bernstein theorem). -/
 noncomputable def funOdd {f : A → B} {g : B → A} {a : A} (oddGen : OddGeneration f g a) : B :=
   oddGen.exists_parent.choose
 
@@ -110,7 +110,7 @@ lemma funOdd_likeOneToOne {f : A → B} {g : B → A} {x y : A} (hxy : x ≠ y)
 by
   sorry
 
-/-- Finally, the Schroder-Bernstein theorem! -/
+/-- Finally, the Schröder-Bernstein theorem! -/
 theorem equipollentSchroderBernstein :
   (∃ f : A → B, OneToOne f) ∧ (∃ g : B → A, OneToOne g) → Equipollent A B :=
 by

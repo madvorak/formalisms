@@ -5,7 +5,7 @@ def Bound (f : ℝ → ℝ) (b : ℝ) : Prop := ∀ x : ℝ, f x ≤ b
 
 def Bounded (f : ℝ → ℝ) : Prop := ∃ b : ℝ, Bound f b
 
-theorem bounded_add (f g : ℝ → ℝ) : Bounded f ∧ Bounded g → Bounded (f+g) := by
+theorem bounded_add_bounded (f g : ℝ → ℝ) : Bounded f ∧ Bounded g → Bounded (f+g) := by
   sorry
 
 
