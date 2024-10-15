@@ -127,7 +127,7 @@ theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
   -- the least upper bound of all prefixpoints (ŷ) is the (unique) great fixpoint
   UniqueMember (GreatFixpoint F) (⊔ Prefixpoint F) ∧
   -- the great lower bound of all posfixpoints (ẑ) is the (unique) least fixpoint
-  UniqueMember (LeastFixpoint F) (⊔ Posfixpoint F) :=
+  UniqueMember (LeastFixpoint F) (⊓ Posfixpoint F) :=
 by
   sorry -- homework #2
 
