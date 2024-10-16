@@ -40,7 +40,7 @@ theorem bounded_add_bounded (f g : ℝ → ℝ) : Bounded f ∧ Bounded g → Bo
 theorem almostCantor (T : Type) : ¬ (∃ f : T → Set T, f.Surjective) := by
   intro ⟨f, hf⟩
   unfold Function.Surjective at hf
-  specialize hf { x | x ∉ f x }
+  specialize hf { x : T | x ∉ f x }
   obtain ⟨a, ha⟩ := hf
   have impossible : a ∈ f a ↔ a ∉ f a
   · exact Eq.to_iff (congr_fun ha a)
