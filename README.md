@@ -2,7 +2,9 @@
 
 ## Timeline
 
-[2024-10-15](Formalisms/Class1.lean)
+[2024-10-15](Formalisms/Class1.lean) and (optional) [homework](Formalisms/Homework1.lean)
+
+[2024-10-17](Formalisms/Class2.lean) and (optional) [homework](Formalisms/Homework2.lean)
 
 ## How to Lean 4
 
