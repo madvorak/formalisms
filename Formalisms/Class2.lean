@@ -51,6 +51,8 @@ section bounds
 
 variable [Poset A]
 
+/-- mnemonics: `a b x y z` -/
+
 def Set.LowerBound (S : Set A) (a : A) : Prop :=
   ∀ x ∈ S, a ⊑ x
 
@@ -63,7 +65,27 @@ def Set.LeastUpperBound (S : Set A) (y : A) : Prop :=
 def Set.GreatLowerBound (S : Set A) (b : A) : Prop :=
   S.LowerBound b ∧ ∀ a : A, S.LowerBound a → a ⊑ b
 
-/-- mnemonics: `a b x y z` -/
+lemma glb_is_unique {S : Set A} {x₁ x₂ : A}
+  (hx₁ : S.GreatLowerBound x₁) (hx₂ : S.GreatLowerBound x₂) :
+  x₁ = x₂ :=
+by
+  apply Poset.antis
+  constructor
+  · apply hx₂.right
+    exact hx₁.left
+  · apply hx₁.right
+    exact hx₂.left
+
+lemma lub_is_unique {S : Set A} {x₁ x₂ : A}
+  (hx₁ : S.LeastUpperBound x₁) (hx₂ : S.LeastUpperBound x₂) :
+  x₁ = x₂ :=
+by
+  apply Poset.antis
+  constructor
+  · apply hx₁.right
+    exact hx₂.left
+  · apply hx₂.right
+    exact hx₁.left
 
 class CompleteLattic (A : Type) extends Poset A where
   hasInfim : ∀ S : Set A, ∃ b : A, S.GreatLowerBound b
@@ -97,18 +119,25 @@ lemma infim_is_great (S : Set A) (a : A) (ha : S.LowerBound a) : a ⊑ ⊓S :=
 lemma supre_is_least (S : Set A) (z : A) (hz : S.UpperBound z) : ⊔S ⊑ z :=
   (CompleteLattic.hasSupre S).choose_spec.right z hz
 
+lemma glb_is_supre {S : Set A} {x : A} (hx : S.GreatLowerBound x) :
+  x = ⊓S :=
+by
+  apply glb_is_unique
+  · exact hx
+  · constructor
+    · exact infim_is_lower S
+    · exact infim_is_great S
+
+lemma lub_is_infim {S : Set A} {x : A} (hx : S.LeastUpperBound x) :
+  x = ⊔S :=
+by
+  apply lub_is_unique
+  · exact hx
+  · constructor
+    · exact supre_is_upper S
+    · exact supre_is_least S
+
 end extrema
-
-
-section stuff
-
-def Monoton [Relation A] (F : A → A) : Prop :=
-  ∀ x y : A, x ⊑ y → F x ⊑ F y
-
-def Set.ContainsOnly (S : Set A) (a : A) : Prop :=
-  a ∈ S ∧ ∀ b ∈ S, b = a
-
-end stuff
 
 
 section fixpoints

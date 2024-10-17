@@ -1,6 +1,11 @@
 import Formalisms.Class2
 
-theorem fixpointKnasterTarski {A : Type} {F : A → A} [CompleteLattic A] (hF : Monoton F) :
+variable {A : Type}
+
+def Monoton [Relation A] (F : A → A) : Prop :=
+  ∀ x y : A, x ⊑ y → F x ⊑ F y
+
+theorem fixpointKnasterTarski {F : A → A} [CompleteLattic A] (hF : Monoton F) :
   -- the least upper bound of all prefixpoints is a great fixpoint
   GreatFixpoint F (⊔ Prefixpoint F) ∧
   -- the great lower bound of all posfixpoints is a least fixpoint
@@ -14,8 +19,10 @@ by
   set b := ⊓ Posfixpoint F -- `⊓`
   sorry -- homework #2
 
+def Set.ContainsOnly (S : Set A) (a : A) : Prop :=
+  a ∈ S ∧ ∀ b ∈ S, b = a
 
-theorem fixpointKnasterTarski_full {A : Type} {F : A → A} [CompleteLattic A] (hF : Monoton F) :
+theorem fixpointKnasterTarski_unique {F : A → A} [CompleteLattic A] (hF : Monoton F) :
   -- the least upper bound of all prefixpoints is the unique great fixpoint
   (GreatFixpoint F).ContainsOnly (⊔ Prefixpoint F) ∧
   -- the great lower bound of all posfixpoints is the unique least fixpoint
@@ -27,4 +34,4 @@ by
   have hb' := infim_is_great (Posfixpoint F) -- `⊓`
   set y := ⊔ Prefixpoint F -- `⊔`
   set b := ⊓ Posfixpoint F -- `⊓`
-  sorry
+  sorry -- last year's homework (you can ignore)
