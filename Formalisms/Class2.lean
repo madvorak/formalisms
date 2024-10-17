@@ -62,19 +62,19 @@ noncomputable def infim (S : Set A) : A :=
 noncomputable def supre (S : Set A) : A :=
   (CompleteLattic.hasSupre S).choose
 
-prefix:70 "⊓ " => infim
-prefix:70 "⊔ " => supre
+prefix:999 "⊓ " => infim
+prefix:999 "⊔ " => supre
 
-lemma infim_is_LowerBound (S : Set A) : S.LowerBound (⊓S) :=
+lemma infim_is_lower (S : Set A) : S.LowerBound (⊓S) :=
   (CompleteLattic.hasInfim S).choose_spec.left
 
-lemma supre_is_UpperBound (S : Set A) : S.UpperBound (⊔S) :=
+lemma supre_is_upper (S : Set A) : S.UpperBound (⊔S) :=
   (CompleteLattic.hasSupre S).choose_spec.left
 
-lemma infim_is_Great (S : Set A) (a : A) (ha : S.LowerBound a) : a ⊑ ⊓S :=
+lemma infim_is_great (S : Set A) (a : A) (ha : S.LowerBound a) : a ⊑ ⊓S :=
   (CompleteLattic.hasInfim S).choose_spec.right a ha
 
-lemma supre_is_Least (S : Set A) (z : A) (hz : S.UpperBound z) : ⊔S ⊑ z :=
+lemma supre_is_least (S : Set A) (z : A) (hz : S.UpperBound z) : ⊔S ⊑ z :=
   (CompleteLattic.hasSupre S).choose_spec.right z hz
 
 end extrema
