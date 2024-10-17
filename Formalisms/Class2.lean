@@ -53,11 +53,11 @@ variable [Poset A]
 
 /-- mnemonics: `a b x y z` -/
 
-def Set.LowerBound (S : Set A) (a : A) : Prop :=
-  ∀ x ∈ S, a ⊑ x
-
 def Set.UpperBound (S : Set A) (z : A) : Prop :=
   ∀ x ∈ S, x ⊑ z
+
+def Set.LowerBound (S : Set A) (a : A) : Prop :=
+  ∀ x ∈ S, a ⊑ x
 
 def Set.LeastUpperBound (S : Set A) (y : A) : Prop :=
   S.UpperBound y ∧ ∀ z : A, S.UpperBound z → y ⊑ z
@@ -65,18 +65,7 @@ def Set.LeastUpperBound (S : Set A) (y : A) : Prop :=
 def Set.GreatLowerBound (S : Set A) (b : A) : Prop :=
   S.LowerBound b ∧ ∀ a : A, S.LowerBound a → a ⊑ b
 
-lemma glb_is_unique {S : Set A} {x₁ x₂ : A}
-  (hx₁ : S.GreatLowerBound x₁) (hx₂ : S.GreatLowerBound x₂) :
-  x₁ = x₂ :=
-by
-  apply Poset.antis
-  constructor
-  · apply hx₂.right
-    exact hx₁.left
-  · apply hx₁.right
-    exact hx₂.left
-
-lemma lub_is_unique {S : Set A} {x₁ x₂ : A}
+lemma Set.LeastUpperBound.is_unique {S : Set A} {x₁ x₂ : A}
   (hx₁ : S.LeastUpperBound x₁) (hx₂ : S.LeastUpperBound x₂) :
   x₁ = x₂ :=
 by
@@ -87,9 +76,20 @@ by
   · apply hx₂.right
     exact hx₁.left
 
+lemma Set.GreatLowerBound.is_unique {S : Set A} {x₁ x₂ : A}
+  (hx₁ : S.GreatLowerBound x₁) (hx₂ : S.GreatLowerBound x₂) :
+  x₁ = x₂ :=
+by
+  apply Poset.antis
+  constructor
+  · apply hx₂.right
+    exact hx₁.left
+  · apply hx₁.right
+    exact hx₂.left
+
 class CompleteLattic (A : Type) extends Poset A where
-  hasInfim : ∀ S : Set A, ∃ b : A, S.GreatLowerBound b
   hasSupre : ∀ S : Set A, ∃ y : A, S.LeastUpperBound y
+  hasInfim : ∀ S : Set A, ∃ b : A, S.GreatLowerBound b
 
 end bounds
 
@@ -98,44 +98,44 @@ section extrema
 
 variable [CompleteLattic A]
 
-noncomputable def infim (S : Set A) : A :=
-  (CompleteLattic.hasInfim S).choose
-
 noncomputable def supre (S : Set A) : A :=
   (CompleteLattic.hasSupre S).choose
 
-prefix:999 "⊓ " => infim
-prefix:999 "⊔ " => supre
+noncomputable def infim (S : Set A) : A :=
+  (CompleteLattic.hasInfim S).choose
 
-lemma infim_is_lower (S : Set A) : S.LowerBound (⊓S) :=
-  (CompleteLattic.hasInfim S).choose_spec.left
+prefix:999 "⊔ " => supre
+prefix:999 "⊓ " => infim
 
 lemma supre_is_upper (S : Set A) : S.UpperBound (⊔S) :=
   (CompleteLattic.hasSupre S).choose_spec.left
 
-lemma infim_is_great (S : Set A) (a : A) (ha : S.LowerBound a) : a ⊑ ⊓S :=
-  (CompleteLattic.hasInfim S).choose_spec.right a ha
+lemma infim_is_lower (S : Set A) : S.LowerBound (⊓S) :=
+  (CompleteLattic.hasInfim S).choose_spec.left
 
 lemma supre_is_least (S : Set A) (z : A) (hz : S.UpperBound z) : ⊔S ⊑ z :=
   (CompleteLattic.hasSupre S).choose_spec.right z hz
 
-lemma glb_is_supre {S : Set A} {x : A} (hx : S.GreatLowerBound x) :
-  x = ⊓S :=
-by
-  apply glb_is_unique
-  · exact hx
-  · constructor
-    · exact infim_is_lower S
-    · exact infim_is_great S
+lemma infim_is_great (S : Set A) (a : A) (ha : S.LowerBound a) : a ⊑ ⊓S :=
+  (CompleteLattic.hasInfim S).choose_spec.right a ha
 
-lemma lub_is_infim {S : Set A} {x : A} (hx : S.LeastUpperBound x) :
+lemma Set.LeastUpperBound.eq_supre {S : Set A} {x : A} (hx : S.LeastUpperBound x) :
   x = ⊔S :=
 by
-  apply lub_is_unique
+  apply Set.LeastUpperBound.is_unique
   · exact hx
   · constructor
     · exact supre_is_upper S
     · exact supre_is_least S
+
+lemma Set.GreatLowerBound.eq_infim {S : Set A} {x : A} (hx : S.GreatLowerBound x) :
+  x = ⊓S :=
+by
+  apply Set.GreatLowerBound.is_unique
+  · exact hx
+  · constructor
+    · exact infim_is_lower S
+    · exact infim_is_great S
 
 end extrema
 
