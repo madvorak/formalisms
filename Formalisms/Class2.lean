@@ -22,7 +22,25 @@ class Poset (A : Type) extends Relation A where
 theorem triangleless {A : Type} [Poset A] (a b c : A) :
   (a ⊑ b ∧ b ⊑ c ∧ c ⊑ a) → a = b :=
 by
-  sorry
+  intro ⟨hab, hbc, hca⟩
+  /-
+  have hba : b ⊑ a
+  · apply Poset.trans
+    constructor
+    · exact hbc
+    · exact hca
+  apply Poset.antis
+  constructor
+  · exact hab
+  · exact hba
+  -/
+  apply Poset.antis
+  constructor
+  · exact hab
+  · apply Poset.trans
+    constructor
+    · exact hbc
+    · exact hca
 
 end relations
 
@@ -44,6 +62,8 @@ def Set.LeastUpperBound (S : Set A) (y : A) : Prop :=
 
 def Set.GreatLowerBound (S : Set A) (b : A) : Prop :=
   S.LowerBound b ∧ ∀ a : A, S.LowerBound a → a ⊑ b
+
+/-- mnemonics: `a b x y z` -/
 
 class CompleteLattic (A : Type) extends Poset A where
   hasInfim : ∀ S : Set A, ∃ b : A, S.GreatLowerBound b

@@ -4,8 +4,29 @@ import Mathlib.Tactic
 /-- Function `f` is "injective". -/
 def OneToOne {A B : Type} (f : A → B) : Prop := ∀ x y : A, x ≠ y → f x ≠ f y
 
+theorem OneToOne.comp {A B C : Type} {f : A → B} {g : B → C}
+  (hf : OneToOne f) (hg : OneToOne g) :
+  OneToOne (g ∘ f) :=
+by
+  intro x y hxy
+  show g (f x) ≠ g (f y)
+  apply hg
+  apply hf
+  exact hxy
+
 /-- Function `f` is "surjective". -/
 def Onto {A B : Type} (f : A → B) : Prop := ∀ z : B, ∃ x : A, f x = z
+
+theorem Onto.comp {A B C : Type} {f : A → B} {g : B → C}
+  (hf : Onto f) (hg : Onto g) :
+  Onto (g ∘ f) :=
+by
+  intro z
+  obtain ⟨y, hyz⟩ := hg z
+  obtain ⟨x, hxy⟩ := hf y
+  use x
+  rewrite [← hyz, ← hxy]
+  rfl
 
 /-- `A` and `B` have "the same size" iff there is `f : A → B` that is both "injective" and "surjective". -/
 def Equipollent (A B : Type) : Prop := ∃ f : A → B, OneToOne f ∧ Onto f
