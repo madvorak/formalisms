@@ -69,23 +69,27 @@ lemma Set.LeastUpperBound.is_unique {S : Set A} {x₁ x₂ : A}
   (hx₁ : S.LeastUpperBound x₁) (hx₂ : S.LeastUpperBound x₂) :
   x₁ = x₂ :=
 by
+  obtain ⟨x₁upper, x₁least⟩ := hx₁
+  obtain ⟨x₂upper, x₂least⟩ := hx₂
   apply Poset.antis
   constructor
-  · apply hx₁.right
-    exact hx₂.left
-  · apply hx₂.right
-    exact hx₁.left
+  · apply x₁least
+    exact x₂upper
+  · apply x₂least
+    exact x₁upper
 
 lemma Set.GreatLowerBound.is_unique {S : Set A} {x₁ x₂ : A}
   (hx₁ : S.GreatLowerBound x₁) (hx₂ : S.GreatLowerBound x₂) :
   x₁ = x₂ :=
 by
+  obtain ⟨x₁lower, x₁great⟩ := hx₁
+  obtain ⟨x₂lower, x₂great⟩ := hx₂
   apply Poset.antis
   constructor
-  · apply hx₂.right
-    exact hx₁.left
-  · apply hx₁.right
-    exact hx₂.left
+  · apply x₂great
+    exact x₁lower
+  · apply x₁great
+    exact x₂lower
 
 class CompleteLattic (A : Type) extends Poset A where
   hasSupre : ∀ S : Set A, ∃ y : A, S.LeastUpperBound y
@@ -125,8 +129,8 @@ by
   apply Set.LeastUpperBound.is_unique
   · exact hx
   · constructor
-    · exact supre_is_upper S
-    · exact supre_is_least S
+    · apply supre_is_upper
+    · apply supre_is_least
 
 lemma Set.GreatLowerBound.eq_infim {S : Set A} {x : A} (hx : S.GreatLowerBound x) :
   x = ⊓S :=
@@ -134,8 +138,8 @@ by
   apply Set.GreatLowerBound.is_unique
   · exact hx
   · constructor
-    · exact infim_is_lower S
-    · exact infim_is_great S
+    · apply infim_is_lower
+    · apply infim_is_great
 
 end extrema
 
@@ -170,10 +174,10 @@ lemma fixpoint_of_pre_pos [Poset A] {F : A → A} {x : A} :
 by
   apply Poset.antis
 
-def GreatFixpoint [Poset A] (F : A → A) : Set A :=
-  Fixpoint F ∩ (setOf (Fixpoint F)).UpperBound
+def GreatFixpoint [Poset A] (F : A → A) (x : A) : Prop :=
+  Fixpoint F x ∧ (setOf (Fixpoint F)).UpperBound x
 
-def LeastFixpoint [Poset A] (F : A → A) : Set A :=
-  Fixpoint F ∩ (setOf (Fixpoint F)).LowerBound
+def LeastFixpoint [Poset A] (F : A → A) (x : A) : Prop :=
+  Fixpoint F x ∧ (setOf (Fixpoint F)).LowerBound x
 
 end fixpoints
