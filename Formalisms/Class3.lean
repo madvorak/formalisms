@@ -13,6 +13,21 @@ section continuous_functions
 
 variable {A : Type} [CompleteLattic A]
 
+example {F : A → A} (hF : Monoton F) {s : ℕ → A} :
+  ⊔ { F (s n) | n : ℕ } ⊑ F (⊔ { s n | n : ℕ }) :=
+by
+  apply supre_is_least
+  simp [Set.UpperBound]
+  intro i
+  apply hF
+  apply supre_is_upper
+  use i
+
+example {F : A → A} (hF : Monoton F) {s : ℕ → A} :
+  F (⊓ { s n | n : ℕ }) ⊑ ⊓ { F (s n) | n : ℕ } :=
+by
+  sorry
+
 def JoinContinuous (F : A → A) : Prop :=
   ∀ s : ℕ → A, (∀ n : ℕ, s n ⊑ s n.succ) →
     F (⊔ { s n | n : ℕ }) = ⊔ { F (s n) | n : ℕ }
@@ -77,8 +92,6 @@ lemma MeetContinuous.monoton {F : A → A} (hF : MeetContinuous F) :
   Monoton F :=
 by
   sorry
-
--- TODO monotonicity implies one "direction" of continuity.
 
 noncomputable instance : Bot A where
   bot := ⊔ Set.univ

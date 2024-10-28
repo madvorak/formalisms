@@ -182,7 +182,7 @@ private inductive D (P : α → α → Prop) : α → α → Prop
   | distant (x z y : α) (hxz : P x z) (hzy : D P z y) : D P x y
 
 example {H M : α → Prop} (HxorM : ∀ a : α, H a ∧ ¬ M a ∨ M a ∧ ¬ H a)
-    {x y : α} (monkey : M x) (human : H y) {P : α → α → Prop} (hXY : D P x y) :
+  {x y : α} (monkey : M x) (human : H y) {P : α → α → Prop} (hXY : D P x y) :
   ∃ z₁ z₂ : α, P z₁ y ∧ M z₁ ∧ H z₂ :=
 by
   sorry -- TODO homework 4.2
