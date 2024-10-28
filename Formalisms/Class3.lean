@@ -36,7 +36,7 @@ def MeetContinuous (F : A → A) : Prop :=
   ∀ s : ℕ → A, (∀ n : ℕ, s n.succ ⊑ s n) →
     F (⊓ { s n | n : ℕ }) = ⊓ { F (s n) | n : ℕ }
 
-lemma under_iff_supre_pair (a b : A) :
+lemma above_iff_supre_pair (a b : A) :
   a ⊑ b ↔ ⊔ {a, b} = b :=
 by
   constructor <;> intro hab
@@ -84,7 +84,7 @@ by
           exact hzy.symm
       · obtain ⟨n, hn⟩ := hz
         cases n <;> simp_all
-  rw [under_iff_supre_pair] at hxy ⊢
+  rw [above_iff_supre_pair] at hxy ⊢
   rw [hxy] at hFxy
   exact hFxy.symm
 
@@ -94,21 +94,17 @@ by
   sorry
 
 noncomputable instance : Bot A where
-  bot := ⊔ Set.univ
+  bot := ⊓ Set.univ
 
 noncomputable instance : Top A where
-  top := ⊓ Set.univ
+  top := ⊔ Set.univ
 
-/- Kleene fixpoint theorem -/
+lemma bot_under (x : A) : ⊥ ⊑ x := by
+  apply infim_is_lower
+  trivial
 
-theorem JoinContinuous.leastFixpoint {F : A → A} (hF : JoinContinuous F) :
-  LeastFixpoint F (⊔ { F^[i] ⊥ | i : ℕ }) :=
-by
-  sorry -- homework
-
-theorem MeetContinuous.greatFixpoint {F : A → A} (hF : MeetContinuous F) :
-  GreatFixpoint F (⊓ { F^[i] ⊤ | i : ℕ }) :=
-by
-  sorry -- homework
+lemma top_above (x : A) : x ⊑ ⊤ := by
+  apply supre_is_upper
+  trivial
 
 end continuous_functions
