@@ -3,8 +3,19 @@ import Formalisms.Homework2
 
 section induction_on_natural_numbers
 
+lemma pow_two_lt_two_pow_aux_add_five (n : ℕ) : (n+5) ^ 2 < 2 ^ (n+5) := by
+  induction n with
+  | zero =>
+    norm_num
+  | succ n ih =>
+    convert_to (n + 1 + 5) ^ 2 < 2 ^ (n+5) + 2 ^ (n+5)
+    · ring
+    convert_to (n+5) ^ 2 + (n+5) * 2 + 1 < 2 ^ (n+5) + 2 ^ (n+5)
+    · ring
+    nlinarith
+
 theorem pow_two_lt_two_pow {n : ℕ} (at_least_five : n ≥ 5) : n^2 < 2^n := by
-  sorry
+  convert pow_two_lt_two_pow_aux_add_five (n-5) <;> omega
 
 end induction_on_natural_numbers
 
@@ -26,7 +37,12 @@ by
 example {F : A → A} (hF : Monoton F) {s : ℕ → A} :
   F (⊓ { s n | n : ℕ }) ⊑ ⊓ { F (s n) | n : ℕ } :=
 by
-  sorry
+  apply infim_is_great
+  simp [Set.LowerBound]
+  intro i
+  apply hF
+  apply infim_is_lower
+  use i
 
 def JoinContinuous (F : A → A) : Prop :=
   ∀ s : ℕ → A, (∀ n : ℕ, s n ⊑ s n.succ) →
@@ -61,7 +77,24 @@ by
 lemma under_iff_infim_pair (a b : A) :
   a ⊑ b ↔ ⊓ {a, b} = a :=
 by
-  sorry
+  constructor <;> intro hab
+  rw [←Set.GreatLowerBound.eq_infim]
+  · constructor
+    · intro x hx
+      cases hx with
+      | inl ha =>
+        rw [ha]
+        apply Poset.refle
+      | inr hb =>
+        rw [hb]
+        exact hab
+    · intro x hx
+      apply hx
+      apply Set.mem_insert
+  · rw [←hab]
+    apply infim_is_lower
+    apply Set.mem_insert_of_mem
+    rfl
 
 lemma JoinContinuous.monoton {F : A → A} (hF : JoinContinuous F) :
   Monoton F :=
@@ -91,7 +124,27 @@ by
 lemma MeetContinuous.monoton {F : A → A} (hF : MeetContinuous F) :
   Monoton F :=
 by
-  sorry
+  intro x y hxy
+  have hFxy : F (⊓ {x, y}) = ⊓ {F x, F y} := by
+    convert hF (fun i : ℕ => if i = 0 then y else x) (by
+        intro
+        have := Poset.refle x
+        aesop
+      ) using 1 <;>
+    · congr
+      apply Set.Subset.antisymm <;> intro z hz
+      · cases hz with
+        | inl hzx =>
+          use 1
+          exact hzx.symm
+        | inr hzy =>
+          use 0
+          exact hzy.symm
+      · obtain ⟨n, hn⟩ := hz
+        cases n <;> simp_all
+  rw [under_iff_infim_pair] at hxy ⊢
+  rw [hxy] at hFxy
+  exact hFxy.symm
 
 noncomputable instance : Bot A where
   bot := ⊓ Set.univ
