@@ -6,6 +6,8 @@
 
 [2024-10-17](Formalisms/Class2.lean) and (optional) [homework](Formalisms/Homework2.lean)
 
+[2024-10-29](Formalisms/Class3.lean) and (optional) [homework](Formalisms/Homework3.lean)
+
 ## How to Lean 4
 
 ### Setup Lean
