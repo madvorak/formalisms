@@ -12,6 +12,7 @@ def cat : List α → List α → List α
 | a :: x, y => a :: cat x y
 
 infix:66 " ;; " => cat
+-- Outside of this exercise, we will write `++` for `List.append` which comes with many lemmas.
 
 theorem cat_assoc (x y z : List α) :
   (x ;; y) ;; z = x ;; (y ;; z) :=
@@ -118,7 +119,7 @@ by
     apply Nat.succ_le_succ
     exact Nat.le_succ l.length
 
-variable [LinearOrder α] [@DecidableRel α (· ≤ ·)]
+variable [LinearOrder α]
 
 def merge : List α → List α → List α
 | [ ]   , y      => y
@@ -183,7 +184,7 @@ private inductive D (P : α → α → Prop) : α → α → Prop
 
 example {H M : α → Prop} (HxorM : ∀ a : α, H a ∧ ¬ M a ∨ M a ∧ ¬ H a)
   {x y : α} (monkey : M x) (human : H y) {P : α → α → Prop} (hXY : D P x y) :
-  ∃ z₁ z₂ : α, P z₁ y ∧ M z₁ ∧ H z₂ :=
+  ∃ z₁ z₂ : α, P z₁ z₂ ∧ M z₁ ∧ H z₂ :=
 by
   sorry -- TODO homework 4.2
 
