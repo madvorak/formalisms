@@ -1,6 +1,5 @@
 import Mathlib.Tactic
 import Mathlib.Data.List.Basic
-import Mathlib.Data.Stream.Init
 
 variable {α : Type}
 
@@ -71,8 +70,6 @@ by
 
 
 -- ### Sorting lists
-
-section sorting
 
 /-- Creates a list made of every other element of given list, starting with its head.  -/
 private def eo : List α → List α
@@ -169,58 +166,3 @@ open scoped List
 theorem mergesort_works : ∀ x : List α, IsSorted (mergesort x) ∧ (mergesort x) ~ x :=
 by
   sorry -- TODO homework 4.1
-
-end sorting
-
-
-
--- instead of `parent(x,y)` we write `P x y`
--- instead of `x > y` we write `D P x y` where `D P` is a relation based on `P` as follows
-private inductive D (P : α → α → Prop) : α → α → Prop
-  -- if `parent(x,y)` then `x > y`
-  | direct (x y : α) (hxy : P x y) : D P x y
-  -- if `parent(x,z)` and `z > y` then `x > y`
-  | distant (x z y : α) (hxz : P x z) (hzy : D P z y) : D P x y
-
-example {H M : α → Prop} (HxorM : ∀ a : α, H a ∧ ¬ M a ∨ M a ∧ ¬ H a)
-  {x y : α} (monkey : M x) (human : H y) {P : α → α → Prop} (hXY : D P x y) :
-  ∃ z₁ z₂ : α, P z₁ z₂ ∧ M z₁ ∧ H z₂ :=
-by
-  sorry -- TODO homework 4.2
-
-
-section infinite_words
-
-private abbrev IW := Stream' (Fin 2)
-
--- Let `E` be the largest `X : {0,1}^ω` such that `X ⊆ 01X ∪ 10X`.
-
-private def E : Set IW :=
-  fun w : IW =>
-    ∃ X : Set IW, -- Alex Keizer's union-of-all-prefixpoints trick!
-      w ∈ X ∧
-      X ⊆ (Stream'.cons 0 '' (Stream'.cons 1 '' X))
-        ∪ (Stream'.cons 1 '' (Stream'.cons 0 '' X))
-
--- Prove `∀ x : {0,1}^ω` we have `x ∈ S` ↔ every finite prefix of `x` of even length has #`0` = #`1`.
-
-example : ∀ x : IW, x ∈ E ↔ ∀ n : ℕ, (x.take (2*n)).count 0 = (x.take (2*n)).count 1 := by
-  intro x
-  constructor
-  · intro ⟨X, hxX, hXX⟩
-    sorry -- TODO homework 4.3
-  · intro hx
-    -- Mario Carneiro's co-induction trick!
-    use { w : IW | ∀ n : ℕ, (w.take (2*n)).count 0 = (w.take (2*n)).count 1 }
-    constructor
-    · exact hx
-    · intro w hw
-      simp at hw
-      clear hx
-      simp
-      if starts : w.head = 0 then
-        sorry
-      else
-        sorry
-
-end infinite_words
