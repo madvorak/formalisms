@@ -56,9 +56,8 @@ by
     | cons a u ih =>
       intro y
       unfold rev r
-      specialize ih (a :: y)
-      rw [cat_assoc]
-      exact ih
+      rewrite [←ih (a :: y), cat_assoc]
+      rfl
   specialize generalized x []
   rw [cat_nil] at generalized
   exact generalized
