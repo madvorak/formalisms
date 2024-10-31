@@ -8,6 +8,11 @@
 
 [2024-10-29](Formalisms/Class3.lean) and (optional) [homework](Formalisms/Homework3.lean)
 
+2024-10-31 consists of three files
+* [finite lists](Formalisms/ListsFinite.lean) (contains a very difficult homework)
+* [infinity lists](Formalisms/ListsInfinite.lean) (does not contain a homework)
+* [monkeys and humans](Formalisms/MonkeyHuman.lean) (contains a very easy homework)
+
 ## How to Lean 4
 
 ### Setup Lean
