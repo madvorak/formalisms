@@ -10,7 +10,7 @@
 
 2024-10-31 consists of three files
 * [finite lists](Formalisms/ListsFinite.lean) (contains a very difficult homework)
-* [infinity lists](Formalisms/ListsInfinite.lean) (does not contain a homework)
+* [infinite lists](Formalisms/ListsInfinite.lean) (does not contain a homework)
 * [monkeys and humans](Formalisms/MonkeyHuman.lean) (contains a very easy homework)
 
 ## How to Lean 4
