@@ -130,7 +130,10 @@ lemma funOdd_likeOneToOne {f : A → B} {g : B → A} {x y : A} (hxy : x ≠ y)
   (hxₒ : OddGeneration f g x) (hyₒ : OddGeneration f g y) :
   funOdd hxₒ ≠ funOdd hyₒ :=
 by
-  sorry
+  intro contr
+  apply hxy
+  rw [←hxₒ.g_funOdd, ←hyₒ.g_funOdd]
+  exact congr_arg g contr
 
 /-- Finally, the Schröder-Bernstein theorem! -/
 theorem equipollentSchroderBernstein :
